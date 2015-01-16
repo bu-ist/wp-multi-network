@@ -103,7 +103,8 @@ function switch_to_network( $new_network = 0, $validate = false ) {
 	$sites = get_networks();
 	foreach ( $sites as $network ) {
 		if ( $network->id == $new_network ) {
-			$current_site = $network;
+			// Without using clone(), global $current_site does not switch to the new network on when adding a new network
+			$current_site = clone($network);
 			break;
 		}
 	}
