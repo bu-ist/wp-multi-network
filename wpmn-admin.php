@@ -143,7 +143,11 @@ class WPMN_Admin {
 
 	/* Config Page */
 
-	function feedback() {
+	function feedback( $result = null ) {
+		global $current_site, $site_id;
+		if( $result and ! is_wp_error( $result ) ) {
+			$switched = switch_to_network( $result );
+		}
 
 		if ( isset( $_GET['updated'] ) ) : ?>
 
@@ -151,7 +155,14 @@ class WPMN_Admin {
 
 		<?php elseif ( isset( $_GET['added'] ) ) : ?>
 
-			<div id="message" class="updated fade"><p><?php esc_html_e( 'Network created.' ); ?></p></div>
+			<div id="message" class="updated fade">
+				<p>
+					<?php esc_html_e( 'Network created.' ); ?><br />
+					<a href="<?php echo network_site_url(); ?>" title="Visit network">Visit Network</a> |
+					<a href="<?php echo network_admin_url(); ?>" title="Manage network">Manage Network</a> |
+					<a href="<?php echo network_admin_url( 'settings.php' ); ?>" title="Network Settings">Network Settings</a>
+				</p>
+			</div>
 
 		<?php elseif ( isset( $_GET['deleted'] ) ) : ?>
 
@@ -163,6 +174,7 @@ class WPMN_Admin {
 
 		<?php endif;
 
+		restore_current_network();
 	}
 
 	/**
@@ -174,6 +186,8 @@ class WPMN_Admin {
 		if ( ! is_super_admin() ) {
 			wp_die( esc_html__( 'You do not have permission to access this page.' ) );
 		}
+
+		$result = null;
 
 		if ( isset( $_POST['update'] ) && isset( $_GET['id'] ) ) {
 			$this->update_network_page();
@@ -188,7 +202,7 @@ class WPMN_Admin {
 		}
 
 		if ( isset( $_POST['add'] ) && isset( $_POST['domain'] ) && isset( $_POST['path'] ) ) {
-			$this->add_network_handler();
+			$result = $this->add_network_handler();
 		}
 
 		if ( isset( $_POST['move'] ) && isset( $_GET['blog_id'] ) ) {
@@ -199,7 +213,7 @@ class WPMN_Admin {
 			$this->reassign_site_page();
 		}
 
-		$this->feedback(); ?>
+		$this->feedback( $result ); ?>
 
 		<div class="wrap" style="position: relative">
 
@@ -571,7 +585,9 @@ class WPMN_Admin {
 					echo( "<h2>Error: " . $error[0] . "</h2>" );
 				}
 			}
+			return $result;
 		}
+		return false;
 	}
 
 	function update_network_page() {
