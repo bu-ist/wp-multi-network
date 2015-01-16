@@ -292,6 +292,7 @@ class WPMN_Admin {
 
 			<div id="col-container">
 				<p><?php esc_html_e( 'A site will be created at the root of the new network' ); ?>.</p>
+				<p><?php printf( esc_html__( 'Note: Default network options from %s will be copied to the the new network.' ), network_home_url() ); ?>.</p>
 				<form method="POST" action="<?php echo $this->admin_url(); ?>">
 					<table class="form-table">
 						<tr><th scope="row"><label for="newName"><?php esc_html_e( 'Network Name' ); ?>:</label></th><td><input type="text" name="name" id="newName" title="<?php esc_html_e( 'A friendly name for your new network' ); ?>" /></td></tr>
