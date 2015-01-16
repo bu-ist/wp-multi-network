@@ -300,8 +300,8 @@ function add_network( $domain, $path, $site_name = false, $clone_network = false
 		foreach( $options_to_clone as $option ) {
 			if ( isset( $options_cache[$option] ) ) {
 				
-				// Fix for strange bug that prevents writing the ms_files_rewriting value for new networks
-				if ( $option == 'ms_files_rewriting' ) {
+				// Fix for strange bug that prevents writing the ms_files_rewriting and welcome_user_email value for new networks
+				if ( $option == 'ms_files_rewriting' || $option == 'welcome_user_email' ) {
 					$wpdb->insert( $wpdb->sitemeta, array('site_id' => $wpdb->siteid, 'meta_key' => $option, 'meta_value' => $options_cache[$option] ) );
 				} else {
 					add_site_option( $option, $options_cache[$option] );
@@ -574,7 +574,24 @@ function network_options_to_copy() {
 		'ms_files_rewriting'    => __( 'Uploaded file handling'                  ),
 		'site_admins'           => __( 'List of network admin usernames'         ),
 		'upload_filetypes'      => __( 'List of allowed file types for uploads'  ),
-		'welcome_email'         => __( 'Content of welcome email'                )
+		'welcome_email'         => __( 'Content of welcome email'                ),
+		
+		/* BU Customization: Custom network options to clone */
+		'active_sitewide_plugins'     => __( 'Active plugins'                                                                                    ),
+		'add_new_users'               => __( 'Allow site administrators to add new users to their site via the "Users → Add New" page.'          ),
+		'blog_upload_space'           => __( 'File size limit for each site'                                                                     ),
+		'bu_network_visibility'       => __( 'Make this entire network visible to everyone, including search engines and archivers'              ),
+		'fileupload_maxk'             => __( 'Max upload file size (KB)'                                                                         ),
+		'first_comment'               => __( 'The first comment on a new site.'                                                                  ),
+		'first_comment_author'        => __( 'The URL for the first comment on a new site.'                                                      ),
+		'first_comment_url'           => __( 'The author of the first comment on a new site.'                                                    ),
+		'first_page'                  => __( 'Content of first page on a new blog'                                                               ),
+		'illegal_names'               => __( 'Banned Names'                                                                                      ),
+		'menu_items'                  => __( 'Enable administration menus'                                                                       ),
+		'registration'                => __( 'Allow new registrations'                                                                           ),
+		'registrationnotification'    => __( 'Send the network admin an email notification every time someone registers a site or user account.' ),
+		'upload_space_check_disabled' => __( 'Site upload space'                                                                                 ),
+		'welcome_user_email'          => __( 'Welcome User Email'                                                                                ),
 	) );
 }
 
