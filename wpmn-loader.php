@@ -19,7 +19,7 @@
  * Plugin Name: WP Multi-Network
  * Plugin URI:  http://wordpress.org/extend/plugins/wp-multi-network/
  * Description: Adds a Network Management UI for super admins in a WordPress Multisite environment
- * Version:     1.5.1-BU1
+ * Version:     1.5.1-BU2
  * Author:      johnjamesjacoby, ddean, BrianLayman
  * Author URI:  http://jjj.me
  * Tags:        multi, networks, site, network, blog, domain, subdomain, path, multisite, MS
