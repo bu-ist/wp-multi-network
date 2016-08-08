@@ -734,7 +734,24 @@ function network_options_to_copy() {
 		'ms_files_rewriting'    => __( 'Uploaded file handling'                 , 'wp-multi-network' ),
 		'site_admins'           => __( 'List of network admin usernames'        , 'wp-multi-network' ),
 		'upload_filetypes'      => __( 'List of allowed file types for uploads' , 'wp-multi-network' ),
-		'welcome_email'         => __( 'Content of welcome email'               , 'wp-multi-network' )
+		'welcome_email'         => __( 'Content of welcome email'               , 'wp-multi-network' ),
+
+		/* BU Customization: Custom network options to clone */
+		'active_sitewide_plugins'     => __( 'Active plugins'                                                                                   , 'wp-multi-network' ),
+		'add_new_users'               => __( 'Allow site administrators to add new users to their site via the "Users → Add New" page.'         , 'wp-multi-network' ),
+		'blog_upload_space'           => __( 'Limit total size of files uploaded (MB)'                                                          , 'wp-multi-network' ),
+		'bu_network_visibility'       => __( 'Make this entire network visible to everyone, including search engines and archivers'             , 'wp-multi-network' ),
+		'fileupload_maxk'             => __( 'Max upload file size (KB)'                                                                        , 'wp-multi-network' ),
+		'first_comment'               => __( 'The first comment on a new site.'                                                                 , 'wp-multi-network' ),
+		'first_comment_author'        => __( 'First Comment Author'                                                                             , 'wp-multi-network' ),
+		'first_comment_url'           => __( 'First Comment URL'                                                                                , 'wp-multi-network' ),
+		'first_page'                  => __( 'The first page on a new site.'                                                                    , 'wp-multi-network' ),
+		'illegal_names'               => __( 'Banned Names'                                                                                     , 'wp-multi-network' ),
+		'menu_items'                  => __( 'Enable administration menus'                                                                      , 'wp-multi-network' ),
+		'registration'                => __( 'Allow new registrations'                                                                          , 'wp-multi-network' ),
+		'registrationnotification'    => __( 'Send the network admin an email notification every time someone registers a site or user account.', 'wp-multi-network' ),
+		'upload_space_check_disabled' => __( 'Site upload space'                                                                                , 'wp-multi-network' ),
+		'welcome_user_email'          => __( 'Welcome User Email'                                                                               , 'wp-multi-network' ),
 	) );
 }
 endif;
