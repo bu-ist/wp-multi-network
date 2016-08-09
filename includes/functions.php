@@ -436,9 +436,9 @@ function add_network( $args = array() ) {
 		foreach ( $r['options_to_clone'] as $option ) {
 			if ( isset( $options_cache[ $option ] ) ) {
 
-				// Fix for bug that prevents writing the ms_files_rewriting
+				// Fix for bug that prevents writing the ms_files_rewriting and welcome_user_email
 				// value for new networks.
-				if ( 'ms_files_rewriting' === $option ) {
+				if ( 'ms_files_rewriting' === $option || 'welcome_user_email' === $option ) {
 					$wpdb->insert( $wpdb->sitemeta, array(
 						'site_id'    => $wpdb->siteid,
 						'meta_key'   => $option,
