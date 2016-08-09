@@ -594,9 +594,9 @@ function add_network( $args = array() ) {
 				continue;
 			}
 
-			// Fix for bug that prevents writing the ms_files_rewriting
+			// Fix for bug that prevents writing the ms_files_rewriting and welcome_user_email
 			// value for new networks.
-			if ( 'ms_files_rewriting' === $option ) {
+			if ( 'ms_files_rewriting' === $option || 'welcome_user_email' === $option ) {
 				$wpdb->insert( $wpdb->sitemeta, array(
 					'site_id'    => $new_network_id,
 					'meta_key'   => $option,
