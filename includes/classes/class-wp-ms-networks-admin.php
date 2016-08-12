@@ -890,7 +890,7 @@ class WP_MS_Networks_Admin {
 		}
 
 		// Find sites which need to be moved into current network
-		$movingTo = [];
+		$movingTo = array();
 		foreach ( $to as $site_id ) {
 			if ( in_array( $site_id, $sitesList ) ) {
 				continue;
@@ -899,7 +899,7 @@ class WP_MS_Networks_Admin {
 		}
 
 		// Find sites which need to be moved out from current network
-		$movingFrom = [];
+		$movingFrom = array();
 		foreach ( $from as $site_id ) {
 			if ( ! in_array( $site_id, $sitesList ) ) {
 				continue;
