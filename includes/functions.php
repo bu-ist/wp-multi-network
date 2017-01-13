@@ -23,6 +23,61 @@ function network_exists( $network_id ) {
 }
 endif;
 
+if ( ! function_exists( 'get_networks' ) ) :
+/**
+ * Get all networks
+ *
+ * @since 1.0.0
+ *
+ * @return array Networks available on the installation
+ */
+function get_networks() {
+	global $wpdb;
+
+	return $wpdb->get_results( "SELECT * FROM {$wpdb->site}" );
+}
+endif;
+
+if ( ! function_exists( 'get_network_domain' ) ) :
+	/**
+	 * Get network's domain name
+	 *
+	 * @author Maxime CULEA
+	 * @since 1.7.1
+	 *
+	 * @param $network_id
+	 *
+	 * @return null|string
+	 */
+	function get_network_domain( $network_id ) {
+		global $wpdb;
+
+		return $wpdb->get_var( $wpdb->prepare( "SELECT domain FROM {$wpdb->site} WHERE id= %d", $network_id ) );
+	}
+endif;
+
+if ( ! function_exists( 'has_path_for_network' ) ) :
+	/**
+	 * Check if given path already exist in the given network (domain)
+	 *
+	 * @author Maxime CULEA
+	 * @since 1.7.1
+	 *
+	 * @param $network_id
+	 * @param $path
+	 *
+	 * @return bool
+	 */
+	function has_path_for_network( $network_id, $path ) {
+		global $wpdb;
+
+		// Check for existing network
+		$network = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->blogs} WHERE site_id = %d AND path = %s LIMIT 1", $network_id, $path ) );
+
+		return ! empty( $network );
+	}
+endif;
+
 if ( ! function_exists( 'user_has_networks' ) ) :
 /**
  *
@@ -436,9 +491,9 @@ function add_network( $args = array() ) {
 		foreach ( $r['options_to_clone'] as $option ) {
 			if ( isset( $options_cache[ $option ] ) ) {
 
-				// Fix for bug that prevents writing the ms_files_rewriting
+				// Fix for bug that prevents writing the ms_files_rewriting and welcome_user_email
 				// value for new networks.
-				if ( 'ms_files_rewriting' === $option ) {
+				if ( 'ms_files_rewriting' === $option || 'welcome_user_email' === $option ) {
 					$wpdb->insert( $wpdb->sitemeta, array(
 						'site_id'    => $wpdb->siteid,
 						'meta_key'   => $option,
@@ -665,9 +720,22 @@ function move_site( $site_id = 0, $new_network_id = 0 ) {
 		return true;
 	}
 
+	// Check if path already exist for network
+	if ( has_path_for_network( $new_network_id, $site->path ) ) {
+		return true;
+	}
+
 	// Move the site is the blogs table
 	$where  = array( 'blog_id' => $site->blog_id  );
 	$update = array( 'site_id' => $new_network_id );
+
+	// Get network domain
+	$new_network_domain = get_network_domain( $new_network_id );
+	if ( $new_network_id !== 0 && ! is_null( $new_network_domain ) ) {
+		// Change site domain with the retrieved network's domain
+		$update['domain'] = $new_network_domain;
+	}
+
 	$result = $wpdb->update( $wpdb->blogs, $update, $where );
 
 	// Bail if site could not be moved
@@ -687,6 +755,12 @@ function move_site( $site_id = 0, $new_network_id = 0 ) {
 		switch_to_network( $new_network_id );
 		wp_update_network_site_counts();
 		restore_current_network();
+	}
+
+	// Update blog's siteurl and home options
+	if ( 0 !== $new_network_id ) {
+		update_blog_option( $site_id, 'siteurl', str_replace( "/{$site->domain}/", "/{$new_network_domain}/", get_blog_option( $site_id, 'siteurl' ) ) );
+		update_blog_option( $site_id, 'home', str_replace( "/{$site->domain}/", "/{$new_network_domain}/", get_blog_option( $site_id, 'home' ) ) );
 	}
 
 	// Refresh blog details
@@ -734,7 +808,24 @@ function network_options_to_copy() {
 		'ms_files_rewriting'    => __( 'Uploaded file handling'                 , 'wp-multi-network' ),
 		'site_admins'           => __( 'List of network admin usernames'        , 'wp-multi-network' ),
 		'upload_filetypes'      => __( 'List of allowed file types for uploads' , 'wp-multi-network' ),
-		'welcome_email'         => __( 'Content of welcome email'               , 'wp-multi-network' )
+		'welcome_email'         => __( 'Content of welcome email'               , 'wp-multi-network' ),
+
+		/* BU Customization: Custom network options to clone */
+		'active_sitewide_plugins'     => __( 'Active plugins'                                                                                   , 'wp-multi-network' ),
+		'add_new_users'               => __( 'Allow site administrators to add new users to their site via the "Users → Add New" page.'         , 'wp-multi-network' ),
+		'blog_upload_space'           => __( 'Limit total size of files uploaded (MB)'                                                          , 'wp-multi-network' ),
+		'bu_network_visibility'       => __( 'Make this entire network visible to everyone, including search engines and archivers'             , 'wp-multi-network' ),
+		'fileupload_maxk'             => __( 'Max upload file size (KB)'                                                                        , 'wp-multi-network' ),
+		'first_comment'               => __( 'The first comment on a new site.'                                                                 , 'wp-multi-network' ),
+		'first_comment_author'        => __( 'First Comment Author'                                                                             , 'wp-multi-network' ),
+		'first_comment_url'           => __( 'First Comment URL'                                                                                , 'wp-multi-network' ),
+		'first_page'                  => __( 'The first page on a new site.'                                                                    , 'wp-multi-network' ),
+		'illegal_names'               => __( 'Banned Names'                                                                                     , 'wp-multi-network' ),
+		'menu_items'                  => __( 'Enable administration menus'                                                                      , 'wp-multi-network' ),
+		'registration'                => __( 'Allow new registrations'                                                                          , 'wp-multi-network' ),
+		'registrationnotification'    => __( 'Send the network admin an email notification every time someone registers a site or user account.', 'wp-multi-network' ),
+		'upload_space_check_disabled' => __( 'Site upload space'                                                                                , 'wp-multi-network' ),
+		'welcome_user_email'          => __( 'Welcome User Email'                                                                               , 'wp-multi-network' ),
 	) );
 }
 endif;
