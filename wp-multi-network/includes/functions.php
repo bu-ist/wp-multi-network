@@ -657,6 +657,7 @@ function add_network( $args = array() ) {
 				} else {
 					add_site_option( $option, $options_cache[ $option ] );
 				}
+			}
 
 			// Skip if option isn't available to copy
 			if ( ! isset( $options_cache[ $option ] ) ) {
