@@ -83,7 +83,13 @@ function wpmn_move_site_assign_metabox( $site = null ) {
 		<div id="major-publishing-actions">
 			<a class="button" href="./sites.php"><?php esc_html_e( 'Cancel', 'wp-multi-network' ); ?></a>
 			<div id="publishing-action">
-				<?php submit_button( esc_attr__( 'Move', 'wp-multi-network' ), 'primary', 'move', false ); ?>
+				<?php
+
+				wp_nonce_field( 'edit_network', 'network_edit' );
+
+				submit_button( esc_attr__( 'Move', 'wp-multi-network' ), 'primary', 'move', false );
+
+				?>
 				<input type="hidden" name="action" value="update">
 				<input type="hidden" name="from" value="<?php echo esc_attr( $site->site_id ); ?>">
 			</div>
